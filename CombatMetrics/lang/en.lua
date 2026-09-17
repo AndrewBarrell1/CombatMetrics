@@ -69,6 +69,7 @@
 	SI_COMBAT_METRICS_TOGGLE_COMBAT_LOG = "Combat Log",
 	SI_COMBAT_METRICS_TOGGLE_GRAPH = "Graph",
 	SI_COMBAT_METRICS_TOGGLE_INFO = "Info",
+	SI_COMBAT_METRICS_TOGGLE_COMBATSTARTEFFECTS = "Combat Start Effects",
 	SI_COMBAT_METRICS_TOGGLE_SETTINGS = "Options",
 
 	SI_COMBAT_METRICS_SIGIL_WARNING = "This Icon indicates that a sigil has been used.",
@@ -297,6 +298,9 @@
 	SI_COMBAT_METRICS_BUFF = "Buff",
 	SI_COMBAT_METRICS_BUFFS = "Buffs",
 	SI_COMBAT_METRICS_DEBUFFS = "Debuffs",
+
+	SI_COMBAT_METRICS_COMBATSTARTEFFECTS_TITLE = "Combat Start Effects",
+	SI_COMBAT_METRICS_COMBATSTARTEFFECTS_EMPTY = "No effects recorded for this fight yet.",
 	SI_COMBAT_METRICS_SHARP = "#",
 	SI_COMBAT_METRICS_BUFFCOUNT_TT = "Player / Overall",
 	SI_COMBAT_METRICS_UPTIME = "Uptime %",
@@ -372,6 +376,9 @@
 
 	SI_COMBAT_METRICS_MENU_STACKS_NAME = "Show stacks of buffs",
 	SI_COMBAT_METRICS_MENU_STACKS_TOOLTIP = "Show individual stacks in the buff panel",
+
+	SI_COMBAT_METRICS_MENU_CSE_NAME = "Track Combat Start Effects",
+	SI_COMBAT_METRICS_MENU_CSE_TOOLTIP = "When turned on, Combat Metrics will track the effects you have at the beginning of a fight",
 
 	SI_COMBAT_METRICS_MENU_GL_NAME = "Monitor Damage in large groups",
 	SI_COMBAT_METRICS_MENU_GL_TOOLTIP = "Monitor group damage in large groups (more than 4 group members)",

@@ -2139,6 +2139,31 @@ local function InitCurrentData()
 	} -- reset currentdata, the previous log is now only linked to the fight.
 end
 
+local function CaptureCombatStartEffects()
+	local effects = {}
+	local numEffects = GetNumBuffs("player")
+
+	for i = 1, numEffects do
+		local effectName, _, _, _, stackCount, iconFilename, _, effectType, _, _, abilityId = GetUnitBuffInfo("player", i)
+
+		effects[i] = {
+			name = effectName,
+			iconFilename = iconFilename,
+			abilityId = abilityId,
+			effectType = effectType,
+			stackCount = stackCount,
+		}
+	end
+
+	return effects
+end
+
+local function OnPlayerCombatState(_, inCombat)
+	if inCombat and db.trackCombatStartEffects and CMX.currentdata then
+		CMX.currentdata.combatStartEffects = CaptureCombatStartEffects()
+	end
+end
+
 local function AddtoChatLog(logType, ...)
 	local logLine = { logType, ... }
 
@@ -2252,6 +2277,9 @@ local function FightSummaryCallback(_, fight)
 
 	fight.grouplog = nil
 	fight.log = CMX.currentdata.log -- copy combatlog
+	if db.trackCombatStartEffects then
+		fight.combatStartEffects = CMX.currentdata.combatStartEffects or {}
+	end
 	InitCurrentData() -- reset currentdata, the previous log is now only linked to the fight.
 
 	if fight.dpsstart ~= nil or fight.hpsstart ~= nil then
@@ -2436,6 +2464,7 @@ local svdefaults = {
 	["recordgrpinlarge"] = true,
 
 	["showstacks"] = true,
+	["trackCombatStartEffects"] = false,
 	["crusherValue"] = 2108,
 	["alkoshValue"] = 6000,
 	["tremorscaleValue"] = 2640,
@@ -2613,6 +2642,7 @@ local function Initialize(event, addon)
 	em:RegisterForEvent(CMX.name .. "zone", EVENT_ZONE_CHANGED, UpdateEvents)
 	em:RegisterForEvent(CMX.name .. "group1", EVENT_GROUP_UPDATE, UpdateEvents)
 	em:RegisterForEvent(CMX.name .. "port", EVENT_PLAYER_ACTIVATED, UpdateEvents)
+	em:RegisterForEvent(CMX.name .. "combatstate", EVENT_PLAYER_COMBAT_STATE, OnPlayerCombatState)
 
 	CMX.UpdateEvents = UpdateEvents
 

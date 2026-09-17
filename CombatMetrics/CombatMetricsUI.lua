@@ -6951,6 +6951,83 @@ function CMX.NewSize(control, newLeft, newTop, newRight, newBottom, oldLeft, old
 	lastResize = { newscale, newpos }
 end
 
+local function updateCombatStartEffectsPanel(panel)
+	CMX.Log("UI", LOG_LEVEL_DEBUG, "Updating CombatStartEffectsPanel")
+	ResetBars(panel)
+
+	local scrollchild = GetControl(panel, "PanelScrollChild")
+	local emptyLabel = panel:GetNamedChild("EmptyLabel")
+
+	local effects = fightData and fightData.combatStartEffects or {}
+
+	local header = panel:GetNamedChild("Header")
+	header:GetNamedChild("Name"):SetText(
+		string.format("%s (Total: %d)", GetString(SI_COMBAT_METRICS_COMBATSTARTEFFECTS_TITLE), #effects)
+	)
+
+	if #effects == 0 then
+		emptyLabel:SetHidden(false)
+		return
+	end
+
+	emptyLabel:SetHidden(true)
+
+	local showids = db.showDebugIds
+
+	local columnWidth = 280
+	local availableWidth = panel:GetNamedChild("Panel"):GetWidth()
+	local numColumns = zo_max(1, zo_floor(availableWidth / columnWidth))
+	local rowsPerColumn = zo_ceil(#effects / numColumns)
+	local columnBottom = {}
+
+	local debuffColor = { 1, 0.6, 0.85, 1 }
+	local buffColor = { 0.6, 1, 0.6, 1 }
+	local neutralColor = { 1, 1, 1, 1 }
+
+	for i, effect in ipairs(effects) do
+		local rowName = scrollchild:GetName() .. "Row" .. i
+		local row = _G[rowName]
+			or CreateControlFromVirtual(rowName, scrollchild, "CombatMetrics_CombatStartEffectRowTemplate")
+
+		local columnIndex = zo_floor((i - 1) / rowsPerColumn)
+		local previousRow = columnBottom[columnIndex]
+
+		if previousRow then
+			row:SetAnchor(TOPLEFT, previousRow, BOTTOMLEFT, 0, 1)
+		else
+			row:SetAnchor(TOPLEFT, scrollchild, TOPLEFT, columnIndex * columnWidth, 1)
+		end
+
+		row:SetHidden(false)
+
+		local name = (effect.abilityId and GetFormattedAbilityName(effect.abilityId)) or effect.name or ""
+		if showids and effect.abilityId then
+			name = string.format("(%d) ", effect.abilityId) .. name
+		end
+
+		local color = (effect.effectType == BUFF_EFFECT_TYPE_DEBUFF and debuffColor)
+			or (effect.effectType == BUFF_EFFECT_TYPE_BUFF and buffColor)
+			or neutralColor
+
+		local nameControl = row:GetNamedChild("Name")
+		nameControl:SetText(name)
+		nameControl:SetColor(unpack(color))
+
+		local iconControl = row:GetNamedChild("Icon")
+		iconControl:SetTexture(effect.iconFilename or "esoui/art/icons/icon_missing.dds")
+
+		local stackControl = row:GetNamedChild("Stack")
+		stackControl:SetText(
+			(effect.stackCount and effect.stackCount > 0) and string.format("%dx", effect.stackCount) or ""
+		)
+
+		row:GetNamedChild("Tooltip").tooltip = { name }
+
+		columnBottom[columnIndex] = row
+		panel.bars[i] = row
+	end
+end
+
 local scene = ZO_Scene:New("CMX_REPORT_SCENE", SCENE_MANAGER)
 
 local fightReportInitialized = false
@@ -7094,6 +7171,9 @@ local function initFightReport()
 
 	local plotWindow = graphPanel:GetNamedChild("PlotWindow")
 	initPlotWindow(plotWindow)
+
+	local combatStartEffectsPanel = mainPanel:GetNamedChild("CombatStartEffects")
+	combatStartEffectsPanel.Update = updateCombatStartEffectsPanel
 
 	local infoPanel = fightReport:GetNamedChild("_InfoPanel")
 	infoPanel.Update = updateInfoPanel

@@ -216,6 +216,18 @@ function CMX.MakeMenu(svdefaults)
 		},
 		{
 			type = "checkbox",
+			name = GetString(SI_COMBAT_METRICS_MENU_CSE_NAME),
+			tooltip = GetString(SI_COMBAT_METRICS_MENU_CSE_TOOLTIP),
+			default = def.trackCombatStartEffects,
+			getFunc = function()
+				return db.trackCombatStartEffects
+			end,
+			setFunc = function(value)
+				db.trackCombatStartEffects = value
+			end,
+		},
+		{
+			type = "checkbox",
 			name = GetString(SI_COMBAT_METRICS_MENU_LM_NAME),
 			tooltip = GetString(SI_COMBAT_METRICS_MENU_LM_TOOLTIP),
 			default = def.lightmode,

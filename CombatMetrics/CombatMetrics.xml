@@ -1209,6 +1209,36 @@
 
 		</Control>
 
+		<Control name="CombatMetrics_CombatStartEffectRowTemplate" resizeToFitDescendents="true" mouseEnabled="true" virtual="true">
+
+			<Controls>
+
+				<Texture name="$(parent)Icon">
+					<Anchor point="LEFT" offsetX="2" />
+					<Dimensions x="18" y="18" />
+				</Texture>
+
+				<Label name="$(parent)Name" inherits="CombatMetrics_ValueFontControl" text="" horizontalAlignment="LEFT"
+					verticalAlignment="CENTER">
+					<Anchor point="LEFT" relativePoint="RIGHT" relativeTo="$(parent)Icon" offsetX="4" />
+					<Dimensions x="200" y="18" />
+				</Label>
+
+				<Label name="$(parent)Stack" inherits="CombatMetrics_ValueFontControl" text="" horizontalAlignment="RIGHT"
+					verticalAlignment="CENTER">
+					<Anchor point="LEFT" relativePoint="RIGHT" relativeTo="$(parent)Name" offsetX="2" />
+					<Dimensions x="30" y="18" />
+				</Label>
+
+				<Control name="$(parent)Tooltip" inherits="CombatMetrics_ControlTooltip">
+					<Anchor point="TOPLEFT" />
+					<Anchor point="BOTTOMRIGHT" />
+				</Control>
+
+			</Controls>
+
+		</Control>
+
 		<Control name="CombatMetrics_ResourceRowTemplate" inherits="CombatMetrics_RowTemplate" virtual="true">
 
 			<Controls>
@@ -3123,6 +3153,58 @@
 
 						</Control>
 
+						<Control name="$(parent)CombatStartEffects" inherits="CombatMetrics_ControlFramed" hidden="true">
+							<AnchorFill />
+
+							<Controls>
+
+								<Control name="$(parent)Header">
+
+									<Anchor point="TOPLEFT" offsetX="4" offsetY="0" />
+									<Anchor point="TOPRIGHT" offsetX="-4" offsetY="0" />
+									<Dimensions y="26" />
+
+									<Controls>
+
+										<Label name="$(parent)Name" inherits="CombatMetrics_ValueFontControl"
+											text="SI_COMBAT_METRICS_COMBATSTARTEFFECTS_TITLE" horizontalAlignment="LEFT" verticalAlignment="CENTER">
+
+											<Anchor point="LEFT" offsetX="0" offsetY="0" />
+											<Dimensions x="260" y="20" />
+
+										</Label>
+
+									</Controls>
+
+								</Control>
+
+								<Line name="$(parent)Sep" color="SI_COMBAT_METRICS_SEP_COLOR" inherits="CombatMetrics_Line_Thin">
+									<Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeTo="$(parent)Header" offsetX="2" offsetY="2" />
+									<Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT" relativeTo="$(parent)Header" offsetX="-2" offsetY="2" />
+								</Line>
+
+								<Control name="$(parent)Panel" inherits="ZO_ScrollContainer" mouseEnabled="true">
+									<Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeTo="$(parent)Sep" offsetX="2" offsetY="4" />
+									<Anchor point="BOTTOMRIGHT" offsetX="-4" offsetY="-4" />
+								</Control>
+
+								<Label name="$(parent)EmptyLabel" inherits="CombatMetrics_ValueFontControl" text="SI_COMBAT_METRICS_COMBATSTARTEFFECTS_EMPTY"
+									horizontalAlignment="CENTER" verticalAlignment="CENTER" hidden="true">
+									<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$(parent)Panel" />
+									<Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" relativeTo="$(parent)Panel" />
+								</Label>
+
+							</Controls>
+
+							<OnInitialized>
+
+								local scrollList = GetControl(self, "PanelScrollChild")
+								scrollList:SetResizeToFitPadding(0, 4)
+
+							</OnInitialized>
+
+						</Control>
+
 					</Controls>
 				</Control>
 
@@ -3210,10 +3292,21 @@
 							</OnInitialized>
 						</Texture>
 
+						<Texture name="$(parent)CombatStartEffectsButton" mouseEnabled="true"
+							textureFile="/esoui/art/icons/mapkey/mapkey_fightersguild.dds" color="33FFFFFF"
+							inherits="CombatMetrics_TextureTooltip CombatMetrics_SelectorButton">
+							<Anchor point="TOP" relativePoint="BOTTOM" relativeTo="$(parent)GraphButton" offsetY="4" />
+							<OnInitialized>
+								self.tooltip = {SI_COMBAT_METRICS_TOGGLE_COMBATSTARTEFFECTS}
+								self.category = "CombatStartEffects"
+								self.isSecondaryCategory = true
+							</OnInitialized>
+						</Texture>
+
 						<Texture name="$(parent)InfoButton" mouseEnabled="true"
 							textureFile="esoui/art/menubar/gamepad/gp_playermenu_icon_tutorial.dds" color="FFFFFFFF"
 							inherits="CombatMetrics_TextureTooltip CombatMetrics_SelectorButton">
-							<Anchor point="TOP" relativePoint="BOTTOM" relativeTo="$(parent)GraphButton" offsetY="4" />
+							<Anchor point="TOP" relativePoint="BOTTOM" relativeTo="$(parent)CombatStartEffectsButton" offsetY="4" />
 							<OnInitialized>
 								self.tooltip = {SI_COMBAT_METRICS_TOGGLE_INFO}
 								self.category = "Info"
